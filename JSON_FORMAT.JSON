@@ -1,0 +1,15 @@
+{
+    "stock": "삼성전자",
+    "articles": [
+      {
+        "title": "삼성전자, 3분기 실적 발표",
+        "summary": "삼성전자는 3분기 실적에서 예상치를 웃도는 매출을 기록.",
+        "url": "https://example.com/article1"
+      },
+      {
+        "title": "반도체 시장 전망",
+        "summary": "글로벌 반도체 수요가 증가하며 삼성전자가 수혜를 입을 것으로 전망.",
+        "url": "https://example.com/article2"
+      }
+    ]
+  }
