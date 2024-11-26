@@ -31,11 +31,11 @@ public class Crawler {
     }
 
     // URL of the website to crawl
-    String homeUrl = "https://finance.naver.com/news/mainnews.naver";
+    private final String homeUrl = "https://finance.naver.com/news/mainnews.naver";
 
     // List to store articles
-    List<Article> articleList = new ArrayList<Article>();
-    JSONArray articlesArray = new JSONArray();
+    private List<Article> articleList = new ArrayList<Article>();
+    private JSONArray articlesArray = new JSONArray();
     
 
     // main method to crawl the website
@@ -107,19 +107,25 @@ public class Crawler {
         return;
     }
 
-    // Return the article list
-    public JSONArray getArticles() {
+    // Return the article list as a JSON array
+    public JSONArray getArticlesJSON() {
         return articlesArray;
+    }
+
+    // Return the article list as a list of strings
+    public List<String> getArticlesString() {
+        List<String> articles = new ArrayList<String>();
+        for(int i = 0; i < articlesArray.length(); i++) {
+            articles.add(articlesArray.getJSONObject(i).toString());
+        }
+        return articles;
     }
 
     // Print the article list for Testing
     public void printArticleList() {
 
-        for(Article article : articleList) {
-            System.out.println("Title: " + article.title);
-            System.out.println("Content: " + article.content);
-            System.out.println("URL: " + article.url);
-            System.out.println();
+        for(int i = 0; i < articlesArray.length(); i++) {
+            System.out.println(articlesArray.getJSONObject(i).toString() + "\n");
         }
     }
 
