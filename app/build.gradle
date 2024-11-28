@@ -23,6 +23,35 @@ dependencies {
 
     // This dependency is used by the application.
     implementation libs.guava
+
+
+/* ======================================
+ * Section: Jang JunYeong's part
+ * Description: Add dependencies for Jsoup and JSON
+ * ====================================== */
+    // jsoup HTML parser library @ https://jsoup.org/
+    implementation 'org.jsoup:jsoup:1.18.1'
+
+    // JSON library https://mvnrepository.com/artifact/org.json/json
+    implementation 'org.json:json:20240303'
+
+
+/* ======================================
+ * Section: 's part
+ * Description: Add dependencies for 
+ * ====================================== */
+ 
+
+ /* ======================================
+ * Section: 's part
+ * Description: Add dependencies for 
+ * ====================================== */
+
+
+ /* ======================================
+ * Section: 's part
+ * Description: Add dependencies for 
+ * ====================================== */
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
