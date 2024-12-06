@@ -5,7 +5,10 @@ package team.project;
 
 import team.project.datacollection.*;
 import team.project.analysis.GPTClient;
+import team.project.analysis.OllamaClient;
 import java.util.List;
+
+import java.io.IOException;
 
 
 public class App {
@@ -24,8 +27,17 @@ public class App {
         //     System.out.println(article);
         //     System.out.println("\n\n");
         // }
-        GPTClient client = new GPTClient();
-        client.execute();
+
+
+        // GPTClient client = new GPTClient();
+        // client.execute();
+
+        OllamaClient client = new OllamaClient();
+        try {
+            client.execute("hi, ollama");
+        } catch (IOException e) {
+            System.out.println(e);
+        }
 
     }
 }
