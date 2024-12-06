@@ -23,7 +23,7 @@ public class App {
         Crawler naverCrawler = new Crawler();
         naverCrawler.crawl();
         List<Article> articles = naverCrawler.getArticles();
-        
+
         // 각 기사에 대해 비동기 작업을 생성
         List<CompletableFuture<Void>> futures = articles.stream()
             .map(article -> CompletableFuture.supplyAsync(() -> {
@@ -36,12 +36,9 @@ public class App {
                 }
             }, executor).thenAccept(result -> {
                 if (result != null) {
-                    System.out.println("\n종목: " + article.url);
-                    System.out.println("- 결과: 성공");
-                    System.out.println("- 종목 유망성(-1 ~ 1): " + result + "\n");
+                    System.out.println("\n\n종목: " + article.url + "\n- 결과: 성공" + "\n- 종목 유망성(-1 ~ 1): " + result);
                 } else {
-                    System.out.println("\n종목: " + article.url);
-                    System.out.println("- 결과: 실패");
+                    System.out.println("\n\n종목: " + article.url + "\n- 결과: 실패");
                 }
             }))
             .toList();
