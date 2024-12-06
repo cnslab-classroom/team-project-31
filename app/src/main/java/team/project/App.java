@@ -8,8 +8,12 @@ import team.project.analysis.GPTClient;
 import team.project.analysis.OllamaClient;
 import team.project.entity.Article;
 
+
 import java.util.List;
 import java.io.IOException;
+import java.util.concurrent.Future;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class App {
@@ -45,13 +49,17 @@ public class App {
             "stubURL"
             );
 
-        OllamaClient client = new OllamaClient();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        OllamaClient client = new OllamaClient(executor);
         try {
-            String result = client.execute(article);
-            System.out.println(result);
-        } catch (IOException e) {
+            Future<String> futureResponse = client.executeAsync(article);
+            System.out.println("Waiting for response...");
+            String result = futureResponse.get();
+            System.out.println(article.enterprise + "에 대한 종목 유망성(-1~1): " + result);
+        } catch (Exception e) {
             System.out.println(e);
+        } finally {
+            executor.shutdown();
         }
-
     }
 }
