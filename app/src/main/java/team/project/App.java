@@ -6,8 +6,9 @@ package team.project;
 import team.project.datacollection.*;
 import team.project.analysis.GPTClient;
 import team.project.analysis.OllamaClient;
-import java.util.List;
+import team.project.entity.Article;
 
+import java.util.List;
 import java.io.IOException;
 
 
@@ -32,9 +33,22 @@ public class App {
         // GPTClient client = new GPTClient();
         // client.execute();
 
+        String enterprise;
+        String headline;
+        String contents;
+        String url;
+
+        Article article = new Article(
+            "고려아연",
+            "고려아연 210만원대까지 치솟아\u2026현대차 제치고 韓 시총 5위 [투자360],",
+            "[연합] [헤럴드경제=신동윤 기자] 경영권의 향방이 갈리는 임시주주총회를 앞두고 급등 중인 고려아연이 6일 장중 210만원 선을 넘어섰다. 이날 오전 9시 14분 현재 고려아연은 전 거래일 대비 7.50% 오른 215만원에 거래 중이다. 개장 직후 9% 가까이 올라 217만5000원에 거래되며 또다시 역대 최고가를 경신했다. 이로 인해 고려아연은 현대차를 제치고 시가총액 순위 5위에 오른 상태다. 고려아연은 전날 종가 200만원으로 역대 최고가를 경신하며 시총 6위에 올라섰는데, 고가에도 불구하고 이날도 큰 폭으로 상승하는 모습이다. 국내 증시에서 시가 200만원 이상인 주식이 거래된 것은 액면분할 전인 2017년 3월 삼성전자 주식이 마지막으로, 이후 7년 9개월 만에 200만원대 주식이 다시 탄생한 것이다. 고려아연 임시주주총회가 내년 1월 23일 열릴 예정인 가운데 장내 지분 매입 경쟁이 치열해지면서 주가가 고공행진 하는 것으로 풀이된다. 임시주총에서 권리 행사가 가능한 주주를 확정 짓는 주주명부 폐쇄일은 오는 20일로, 우호 지분을 확보할 수 있는 기간이 얼마 남지 않아 시장에서는 장내 지분 매집 경쟁이 더욱 치열해질 것이라는 관측이 나온다",
+            "stubURL"
+            );
+
         OllamaClient client = new OllamaClient();
         try {
-            client.execute("hi, ollama");
+            String result = client.execute(article);
+            System.out.println(result);
         } catch (IOException e) {
             System.out.println(e);
         }
