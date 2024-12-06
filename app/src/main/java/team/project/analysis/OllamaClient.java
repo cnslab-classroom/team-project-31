@@ -1,14 +1,16 @@
 package team.project.analysis;
 
-import java.nio.charset.StandardCharsets;
-
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.IOException;
-
+import java.nio.charset.StandardCharsets;
 import java.net.MalformedURLException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.lang.StringBuilder;
 
+import org.json.JSONObject;
 
 
 public class OllamaClient {
@@ -40,7 +42,7 @@ public class OllamaClient {
         this.configuration = configuration;
     }
 
-    public int execute(String prompt) throws IOException {
+    public String execute(String prompt) throws IOException {
         HttpURLConnection conn = (HttpURLConnection) configuration.url.openConnection();
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type", "application/json; utf-8");
@@ -58,6 +60,23 @@ public class OllamaClient {
 
         int code  = conn.getResponseCode();
         System.out.println("ResponseCode: " + code) ;
-        return code;
+
+        BufferedReader in = new BufferedReader (new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+        StringBuilder response = new StringBuilder();
+        String line;
+        while ((line = in. readLine()) != null) {
+        response. append (line);
+        }
+        in.close();
+        // Print the response
+        System.out.println("Response Body: " + response.toString());
+        // Parse the JSON response and print the "response" field
+        JSONObject jsonResponse = new JSONObject(response.toString());
+        String responseText = jsonResponse.getString("response");
+        System.out.println("Response: " + responseText) ;
+        // Close the connection conn Misconnect () ;
+        conn.disconnect();
+
+        return responseText;
     }
 }
