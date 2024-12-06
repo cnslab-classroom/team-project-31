@@ -3,6 +3,14 @@
  */
 package team.project;
 
+import team.project.datacollection.*;
+import team.project.analysis.GPTClient;
+import team.project.analysis.OllamaClient;
+import java.util.List;
+
+import java.io.IOException;
+
+
 public class App {
     public String getGreeting() {
         return "Hello World!";
@@ -10,5 +18,26 @@ public class App {
 
     public static void main(String[] args) {
         System.out.println(new App().getGreeting());
+
+        // Crawler naverCrawler = new Crawler();
+        // naverCrawler.crawl();
+        // List<String> articles = naverCrawler.getArticlesString();
+        // System.out.println(articles.size());
+        // for(String article: articles) {
+        //     System.out.println(article);
+        //     System.out.println("\n\n");
+        // }
+
+
+        // GPTClient client = new GPTClient();
+        // client.execute();
+
+        OllamaClient client = new OllamaClient();
+        try {
+            client.execute("hi, ollama");
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
     }
 }
