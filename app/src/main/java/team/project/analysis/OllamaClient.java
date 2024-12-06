@@ -25,8 +25,26 @@ public class OllamaClient {
         public URL url;
         public String prompt;
 
+        private String escapeJsonString(String input) {
+            if (input == null) {
+                return "";
+            }
+            // \n, \r, \t 등의 제어 문자와 큰따옴표, 백슬래시를 처리
+            return input.replace("\\", "\\\\")
+                        .replace("\"", "\\\"")
+                        .replace("\n", " ")  // 개행문자는 공백으로 대체
+                        .replace("\r", " ")  // 캐리지 리턴도 공백으로 대체
+                        .replace("\t", " ");  // 탭 문자도 공백으로 대체
+        }
+
         public String makePrompt(Article article) {
-            return prompt + "헤드라인: " + article.headline + "원문:" + article.contents;
+            // JSON에 방해되는 문자 전처리
+            String safeHeadline = escapeJsonString(article.headline);
+            String safeContents = escapeJsonString(article.contents);
+            
+            return prompt 
+                + "헤드라인: " + safeHeadline
+                + "원문: " + safeContents;
         }
 
         public Configuration() {
@@ -73,9 +91,17 @@ public class OllamaClient {
         }
 
         int code  = conn.getResponseCode();
-        System.out.println("ResponseCode: " + code) ;
+        // System.out.println("ResponseCode: " + code) ;
 
-        BufferedReader in = new BufferedReader (new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+        BufferedReader in;
+        if (code >= 400) {
+            // 에러 응답일 경우 에러 스트림을 읽음
+            in = new BufferedReader(new InputStreamReader(conn.getErrorStream(), StandardCharsets.UTF_8));
+        } else {
+            // 정상 응답일 경우 일반 스트림을 읽음
+            in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+        }
+
         StringBuilder response = new StringBuilder();
         String line;
         while ((line = in. readLine()) != null) {
@@ -83,11 +109,14 @@ public class OllamaClient {
         }
         in.close();
         
-        System.out.println("Response Body: " + response.toString());
+        if (code >= 400) {
+            System.out.println("Response Body: " + response.toString());
+            throw new IOException("HTTP Error Code: " + code + " - " + response.toString());
+        } 
         
         JSONObject jsonResponse = new JSONObject(response.toString());
         String responseText = jsonResponse.getString("response");
-        System.out.println("Response: " + responseText) ;
+        // System.out.println("Response: " + responseText) ;
         
         conn.disconnect();
 
