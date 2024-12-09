@@ -14,21 +14,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import team.project.entity.Article;
+
 public class Crawler {
-
-    // Inner class to store article information
-    static class Article {
-        String title;
-        String content;
-        String url;
-
-        // Constructor
-        public Article(String title, String content, String url) {
-            this.title = title;
-            this.content = content;
-            this.url = url;
-        }
-    }
 
     // URL of the website to crawl
     private final String homeUrl = "https://finance.naver.com/news/mainnews.naver";
@@ -98,8 +86,8 @@ public class Crawler {
         // Convert the article list to JSON array
         for (Article article : articleList) {
             JSONObject articleJSON = new JSONObject();
-            articleJSON.put("title", article.title);
-            articleJSON.put("content", article.content);
+            articleJSON.put("headline", article.headline);
+            articleJSON.put("contents", article.contents);
             articleJSON.put("url", article.url);
             articlesArray.put(articleJSON);
         }
@@ -110,6 +98,10 @@ public class Crawler {
     // Return the article list as a JSON array
     public JSONArray getArticlesJSON() {
         return articlesArray;
+    }
+
+    public List<Article> getArticles() {
+        return articleList;
     }
 
     // Return the article list as a list of strings
