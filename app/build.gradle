@@ -43,9 +43,11 @@ dependencies {
  
 
  /* ======================================
- * Section: 's part
- * Description: Add dependencies for 
+ * Section: Jeon JongWoo's part
+ * Description: Add dependencies for MySQL
  * ====================================== */
+    // https://mvnrepository.com/artifact/mysql/mysql-connector-java
+    implementation 'mysql:mysql-connector-java:8.0.33'
 
 
  /* ======================================
