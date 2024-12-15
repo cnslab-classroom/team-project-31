@@ -4,6 +4,7 @@
 package team.project;
 
 import team.project.datacollection.*;
+import team.project.analysis.AIClient;
 import team.project.analysis.GPTClient;
 import team.project.analysis.OllamaClient;
 import team.project.entity.Article;
@@ -22,14 +23,16 @@ public class App {
 
         Crawler naverCrawler = new Crawler();
         naverCrawler.crawl();
+        System.out.println("크롤링 시작\n");
         List<Article> articles = naverCrawler.getArticles();
-
+        System.out.println(articles.size()+ "개의 기사를 크롤링했습니다. \n");
+        
         // 각 기사에 대해 비동기 작업을 생성
         List<CompletableFuture<Void>> futures = articles.stream()
             .map(article -> CompletableFuture.supplyAsync(() -> {
-                OllamaClient client = new OllamaClient(executor);
+                AIClient client = new OllamaClient(executor);
                 try {
-                    return client.execute(article); // OllamaClient의 비동기 작업 실행
+                    return client.execute(article); // Client의 비동기 작업 실행
                 } catch (Exception e) {
                     System.err.println("Error processing article " + article.url + ": " + e.getMessage());
                     return null;

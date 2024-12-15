@@ -11,6 +11,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import team.project.entity.Article;
 
@@ -20,6 +24,12 @@ public class GPTClient implements AIClient {
     private static final String API_KEY = "여기에 APIKey를 넣으세요";
     private static final int BUFFER_SIZE = 4096;
     private static final int MAX_TOKENS = 4096; // 최대 토큰 수 설정
+
+    public ExecutorService executor;
+
+    public GPTClient(ExecutorService executor) {
+        this.executor = executor;
+    }
 
     public String execute(Article article) throws IOException {
        
@@ -84,5 +94,15 @@ public class GPTClient implements AIClient {
         return String.join("", result);
     }
 
+        // 비동기 작업을 위한 Callable 생성
+        private Callable<String> createAsyncTask(Article article) {
+            return () -> execute(article);
+        }
+    
+        // 비동기 호출 메서드
+        public Future<String> executeAsync(Article article) {
+            Callable<String> task = createAsyncTask(article);
+            return executor.submit(task);
+        }
 
 }
