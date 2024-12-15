@@ -2,11 +2,7 @@ package team.project.datastorage;
 
 import team.project.entity.Article;
 
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DatabaseManager {
     private static final String URL = "jdbc:mysql://pro.freedb.tech:3306/stockAnalysis";
@@ -23,18 +19,11 @@ public class DatabaseManager {
     }
 
     private static void initializeDatabase() {
-        try (InputStream in = DatabaseManager.class.getResourceAsStream("init.sql");
-             Connection conn = getConnection();
-             Statement stmt = conn.createStatement()) {
-
-            String sql = new String(in.readAllBytes(), StandardCharsets.UTF_8);
-            for (String statement : sql.split(";")) {
-                if (!statement.trim().isEmpty()) {
-                    stmt.execute(statement);
-                }
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Database initialization failed", e);
+        try (Connection conn = getConnection();
+        PreparedStatement useStmt = conn.prepareStatement("USE stockAnalysis")){
+            useStmt.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
