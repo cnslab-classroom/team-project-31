@@ -83,7 +83,7 @@ public class App {
         DatabaseManager.searchData(SearchUrl);
 
         // 특정 URL 데이터 삭제
-        DatabaseManager.deleteDataByUrl(DeleteUrl);
+        DatabaseManager.deleteData(DeleteUrl);
 
         // 모든 데이터 삭제
         DatabaseManager.deleteAllData();

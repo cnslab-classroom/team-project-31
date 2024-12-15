@@ -88,9 +88,9 @@ public class DatabaseManager {
                 System.out.println("URL: " + rs.getString("url"));
                 System.out.println("Estimate value: " + rs.getString("estimate_value"));
                 System.out.println("Evaluation Date: " + rs.getTimestamp("evaluation_date"));
-                System.out.println("-------------------");
+                System.out.println("-------------------\n");
             } else {
-                System.out.println("URL: " + url + "에 해당하는 데이터를 찾을 수 없습니다.");
+                System.out.println("URL: " + url + "에 해당하는 데이터를 찾을 수 없습니다.\n");
             }
             
         } catch (SQLException e) {
@@ -106,7 +106,7 @@ public class DatabaseManager {
              Statement stmt = conn.createStatement()) {
             
             int rowCount = stmt.executeUpdate(sql);
-            System.out.println("총 " + rowCount + "개의 데이터가 삭제되었습니다.");
+            System.out.println("총 " + rowCount + "개의 데이터가 삭제되었습니다.\n");
             
         } catch (SQLException e) {
             System.err.println("데이터 삭제 중 오류 발생: " + e.getMessage());
@@ -114,7 +114,7 @@ public class DatabaseManager {
     }
 
     // URL로 특정 데이터 삭제
-    public static void deleteDataByUrl(String url) {
+    public static void deleteData(String url) {
         String sql = "DELETE FROM article_evaluations WHERE url = ?";
         
         try (Connection conn = getConnection();
@@ -124,9 +124,9 @@ public class DatabaseManager {
             int rowCount = pstmt.executeUpdate();
             
             if (rowCount > 0) {
-                System.out.println("URL: " + url + "의 데이터가 삭제되었습니다.");
+                System.out.println("URL: " + url + "의 데이터가 삭제되었습니다.\n");
             } else {
-                System.out.println("URL: " + url + "에 해당하는 데이터를 찾을 수 없습니다.");
+                System.out.println("URL: " + url + "에 해당하는 데이터를 찾을 수 없습니다.\n");
             }
             
         } catch (SQLException e) {
