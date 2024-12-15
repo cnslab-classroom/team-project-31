@@ -12,6 +12,8 @@ import team.project.entity.Article;
 import java.util.List;
 import java.io.IOException;
 import java.util.concurrent.*;
+import java.util.Map;
+import java.util.HashMap;
 
 
 public class App {
@@ -23,6 +25,7 @@ public class App {
         Crawler naverCrawler = new Crawler();
         naverCrawler.crawl();
         List<Article> articles = naverCrawler.getArticles();
+        Map<String, String> results = new HashMap<>();
 
         // 각 기사에 대해 비동기 작업을 생성
         List<CompletableFuture<Void>> futures = articles.stream()
@@ -36,6 +39,7 @@ public class App {
                 }
             }, executor).thenAccept(result -> {
                 if (result != null) {
+                    results.put(article.url, result);
                     System.out.println("\n\n종목: " + article.url + "\n- 결과: 성공" + "\n- 종목 유망성(-1 ~ 1): " + result);
                 } else {
                     System.out.println("\n\n종목: " + article.url + "\n- 결과: 실패");
@@ -51,6 +55,12 @@ public class App {
         } finally {
             executor.shutdown(); // Executor 종료
         }
+
+        // 결과 출력
+        System.out.println("\n\n--- 결과 ---");
+        results.forEach((url, result) -> {
+            System.out.println("URL: " + url + " - 유망성: " + result);
+        });
     
     }
 }
