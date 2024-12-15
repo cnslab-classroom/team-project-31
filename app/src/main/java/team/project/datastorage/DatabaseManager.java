@@ -2,11 +2,7 @@ package team.project.datastorage;
 
 import team.project.entity.Article;
 
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.sql.*;
-import java.util.List;
-import java.util.Map;
 
 public class DatabaseManager {
     private static final String URL = "jdbc:mysql://pro.freedb.tech:3306/stockAnalysis";
@@ -23,18 +19,11 @@ public class DatabaseManager {
     }
 
     private static void initializeDatabase() {
-        try (InputStream in = DatabaseManager.class.getResourceAsStream("init.sql");
-             Connection conn = getConnection();
-             Statement stmt = conn.createStatement()) {
-
-            String sql = new String(in.readAllBytes(), StandardCharsets.UTF_8);
-            for (String statement : sql.split(";")) {
-                if (!statement.trim().isEmpty()) {
-                    stmt.execute(statement);
-                }
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Database initialization failed", e);
+        try (Connection conn = getConnection();
+        PreparedStatement useStmt = conn.prepareStatement("USE stockAnalysis")){
+            useStmt.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -69,7 +58,7 @@ public class DatabaseManager {
             
             while (rs.next()) {
                 System.out.println("Headline: " + rs.getString("headline"));
-                System.out.println("Contents: " + rs.getString("contents"));
+                //System.out.println("Contents: " + rs.getString("contents")); // 기사 원문 출력
                 System.out.println("URL: " + rs.getString("url"));
                 System.out.println("Estimate Value: " + rs.getDouble("estimate_value"));
                 System.out.println("Evaluation Date: " + rs.getTimestamp("evaluation_date"));
@@ -81,46 +70,68 @@ public class DatabaseManager {
         }
     }
 
-    // URL로 기사 검색
-    public static Article searchData(String url) {
+    // URL로 기사 검색 및 출력
+    public static void searchData(String url) {
         String sql = "SELECT * FROM article_evaluations WHERE url = ?";
         
         try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
             pstmt.setString(1, url);
             ResultSet rs = pstmt.executeQuery();
             
             if (rs.next()) {
-                return new Article(
-                    rs.getString("headline"),
-                    rs.getString("contents"),
-                    rs.getString("url")
-                );
+                System.out.println("\n=== 기사 데이터 ===");
+                System.out.println("-------------------");
+                System.out.println("Headline: " + rs.getString("headline"));
+                System.out.println("Content: " + rs.getString("contents"));
+                System.out.println("URL: " + rs.getString("url"));
+                System.out.println("Estimate value: " + rs.getString("estimate_value"));
+                System.out.println("Evaluation Date: " + rs.getTimestamp("evaluation_date"));
+                System.out.println("-------------------");
+            } else {
+                System.out.println("URL: " + url + "에 해당하는 데이터를 찾을 수 없습니다.");
             }
             
         } catch (SQLException e) {
-            System.err.println("Error searching data: " + e.getMessage());
+            System.err.println("데이터 검색 중 오류 발생: " + e.getMessage());
         }
-        
-        return null;
     }
 
-    // URL로 기사 데이터 출력
-    public static void printData(String url) {
-        Article article = searchData(url);
+    // 모든 데이터 삭제
+    public static void deleteAllData() {
+        String sql = "DELETE FROM article_evaluations";
         
-        if (article == null) {
-            System.out.println("No article found for URL: " + url);
-            return;
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement()) {
+            
+            int rowCount = stmt.executeUpdate(sql);
+            System.out.println("총 " + rowCount + "개의 데이터가 삭제되었습니다.");
+            
+        } catch (SQLException e) {
+            System.err.println("데이터 삭제 중 오류 발생: " + e.getMessage());
         }
+    }
 
-        System.out.println("\n=== 기사 데이터 ===");
-        System.out.println("-------------------");
-        System.out.println("Headline: " + article.headline);
-        System.out.println("Contents: " + article.contents);
-        System.out.println("URL: " + article.url);
-        System.out.println("-------------------");
+    // URL로 특정 데이터 삭제
+    public static void deleteDataByUrl(String url) {
+        String sql = "DELETE FROM article_evaluations WHERE url = ?";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, url);
+            int rowCount = pstmt.executeUpdate();
+            
+            if (rowCount > 0) {
+                System.out.println("URL: " + url + "의 데이터가 삭제되었습니다.");
+            } else {
+                System.out.println("URL: " + url + "에 해당하는 데이터를 찾을 수 없습니다.");
+            }
+            
+        } catch (SQLException e) {
+            System.err.println("데이터 삭제 중 오류 발생: " + e.getMessage());
+        }
     }
 
     private static Connection getConnection() throws SQLException {

@@ -75,6 +75,18 @@ public class App {
         // 저장된 데이터 전체 출력
         System.out.println("\n--- 데이터베이스 조회 결과 ---");
         DatabaseManager.printAllData();
-    
+
+        String SearchUrl = "https://n.news.naver.com/mnews/article/014/0005282470";
+        String DeleteUrl = "https://n.news.naver.com/mnews/article/014/0005282470";
+
+        // 특정 URL 데이터 검색
+        DatabaseManager.searchData(SearchUrl);
+
+        // 특정 URL 데이터 삭제
+        DatabaseManager.deleteDataByUrl(DeleteUrl);
+
+        // 모든 데이터 삭제
+        DatabaseManager.deleteAllData();
+
     }
 }
