@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseManager {
-    private static final String URL = "jdbc:mysql://sql.freedb.tech:3306/freedb_stock_analysis";
-    private static final String USER = "freedb_OOP_test";
-    private static final String PASSWORD = "9F@sE!$y@QfaGGR";
+    private static final String URL = "jdbc:mysql://localhost:3306/stock_analysis";
+    private static final String USER = "root";
+    private static final String PASSWORD = "1q2w3e4r!";
 
     static {
         try {
@@ -41,8 +41,8 @@ public class DatabaseManager {
     }
 
     // 분석 결과 저장
-    public static void storeData(String stockCode, Article article) {
-        String sql = "INSERT INTO stock_evaluations (stock_code, headline, contents, url) VALUES (?, ?, ?, ?)";
+    public static void storeData(String stockCode, Article article, double estimateValue) {
+        String sql = "INSERT INTO stock_evaluations (stock_code, headline, contents, url, estimate_value) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
@@ -50,11 +50,38 @@ public class DatabaseManager {
             pstmt.setString(2, article.headline);
             pstmt.setString(3, article.contents);
             pstmt.setString(4, article.url);
+            pstmt.setDouble(5, estimateValue);
             pstmt.executeUpdate();
             
-            System.out.println("Article data stored successfully for stock code: " + stockCode);
+            System.out.println("Article data and estimate value stored successfully for stock code: " + stockCode);
         } catch (SQLException e) {
             System.err.println("Failed to store article data: " + e.getMessage());
+        }
+    }
+
+    // 모든 종목 데이터 출력
+    public static void printAllData() {
+        String sql = "SELECT * FROM stock_evaluations ORDER BY evaluation_date DESC";
+        
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            
+            System.out.println("\n=== 모든 종목 데이터 ===");
+            System.out.println("=====================================");
+            
+            while (rs.next()) {
+                System.out.println("종목 코드: " + rs.getString("stock_code"));
+                System.out.println("Headline: " + rs.getString("headline"));
+                System.out.println("Contents: " + rs.getString("contents"));
+                System.out.println("URL: " + rs.getString("url"));
+                System.out.println("Estimate Value: " + rs.getDouble("estimate_value"));
+                System.out.println("Evaluation Date: " + rs.getTimestamp("evaluation_date"));
+                System.out.println("-------------------------------------");
+            }
+            
+        } catch (SQLException e) {
+            System.err.println("Error printing all data: " + e.getMessage());
         }
     }
 
@@ -85,7 +112,7 @@ public class DatabaseManager {
         return articles;
     }
 
-    // 분석 결과 출력
+    // 특정 종목 분석 결과 출력
     public static void printData(String stockCode) {
         List<Article> articles = searchData(stockCode);
         
