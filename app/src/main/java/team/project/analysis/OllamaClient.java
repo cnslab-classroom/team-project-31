@@ -18,7 +18,7 @@ import team.project.entity.Article;
 import org.json.JSONObject;
 
 
-public class OllamaClient {
+public class OllamaClient implements AIClient {
 
     public class Configuration {
         public String modelName;
