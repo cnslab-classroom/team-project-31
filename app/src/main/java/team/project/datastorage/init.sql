@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS article_evaluations (
     headline TEXT NOT NULL,
     contents TEXT NOT NULL,
     url VARCHAR(255) NOT NULL,
-    estimate_value DOUBLE NOT NULL,
+    estimate_value VARCHAR(10) NOT NULL,
     evaluation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_url (url)
 );

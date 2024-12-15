@@ -2,12 +2,16 @@ package team.project.datastorage;
 
 import team.project.entity.Article;
 
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
+import java.util.List;
+import java.util.Map;
 
 public class DatabaseManager {
     private static final String URL = "jdbc:mysql://pro.freedb.tech:3306/stockAnalysis";
     private static final String USER = "testUser";
-    private static final String PASSWORD = "";
+    private static final String PASSWORD = "GE?5#kmyUbD23zv";
 
     static {
         try {
@@ -19,16 +23,23 @@ public class DatabaseManager {
     }
 
     private static void initializeDatabase() {
-        try (Connection conn = getConnection();
-        PreparedStatement useStmt = conn.prepareStatement("USE stockAnalysis")){
-            useStmt.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        try (InputStream in = DatabaseManager.class.getResourceAsStream("init.sql");
+             Connection conn = getConnection();
+             Statement stmt = conn.createStatement()) {
+
+            String sql = new String(in.readAllBytes(), StandardCharsets.UTF_8);
+            for (String statement : sql.split(";")) {
+                if (!statement.trim().isEmpty()) {
+                    stmt.execute(statement);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Database initialization failed", e);
         }
     }
 
-    // 분석 결과 저장
-    public static void storeData(Article article, double estimateValue) {
+    // 단일 article 분석 결과 저장
+    public static void storeData(Article article, String estimateValue) {
         String sql = "INSERT INTO article_evaluations (headline, contents, url, estimate_value) VALUES (?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -36,10 +47,10 @@ public class DatabaseManager {
             pstmt.setString(1, article.headline);
             pstmt.setString(2, article.contents);
             pstmt.setString(3, article.url);
-            pstmt.setDouble(4, estimateValue);
+            pstmt.setString(4, estimateValue);
             pstmt.executeUpdate();
             
-            System.out.println("Article data and estimate value stored successfully for URL: " + article.url);
+            System.out.println("Article data stored successfully for URL: " + article.url);
         } catch (SQLException e) {
             System.err.println("Failed to store article data: " + e.getMessage());
         }
