@@ -7,7 +7,7 @@ import java.sql.*;
 public class DatabaseManager {
     private static final String URL = "jdbc:mysql://pro.freedb.tech:3306/stockAnalysis";
     private static final String USER = "testUser";
-    private static final String PASSWORD = "GE?5#kmyUbD23zv";
+    private static final String PASSWORD = "";
 
     static {
         try {
