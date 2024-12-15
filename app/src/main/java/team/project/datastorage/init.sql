@@ -1,5 +1,4 @@
-CREATE DATABASE IF NOT EXISTS stock_analysis;
-USE stock_analysis;
+USE freedb_stock_analysis;
 
 CREATE TABLE IF NOT EXISTS stock_evaluations (
     id INT AUTO_INCREMENT PRIMARY KEY,
