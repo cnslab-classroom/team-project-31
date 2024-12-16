@@ -3,18 +3,17 @@
  */
 package team.project;
 
-import team.project.datacollection.*;
-import team.project.datastorage.DatabaseManager;
-import team.project.analysis.GPTClient;
-import team.project.analysis.OllamaClient;
-import team.project.entity.Article;
-
-
-import java.util.List;
-import java.io.IOException;
-import java.util.concurrent.*;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import team.project.analysis.OllamaClient;
+import team.project.datacollection.Crawler;
+import team.project.datastorage.DatabaseManager;
+import team.project.entity.Article;
 
 
 public class App {

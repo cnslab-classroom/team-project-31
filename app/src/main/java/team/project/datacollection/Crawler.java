@@ -74,8 +74,12 @@ public class Crawler {
                 Document newsDoc = Jsoup.connect(realLink).get();
                 Elements newsContents = newsDoc.select("article#dic_area");
 
+                // Classify the enterprise of the article
+                EnterpriseClassifier classifier = new EnterpriseClassifier();
+                String enterprise = classifier.execute(title, newsContents.text());
+                
                 // Save the article to the array
-                Article article = new Article(title, newsContents.text(), realLink);
+                Article article = new Article(enterprise, title, newsContents.text(), realLink);
                 articleList.add(article);
 
             }
