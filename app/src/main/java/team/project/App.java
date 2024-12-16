@@ -4,6 +4,7 @@
 package team.project;
 
 import team.project.datacollection.*;
+import team.project.datastorage.DatabaseManager;
 import team.project.analysis.GPTClient;
 import team.project.analysis.OllamaClient;
 import team.project.entity.Article;
@@ -61,6 +62,31 @@ public class App {
         results.forEach((url, result) -> {
             System.out.println("URL: " + url + " - 유망성: " + result);
         });
-    
+
+        // 분석 결과 저장
+        System.out.println("\n\n--- 데이터베이스 저장 시작 ---");
+        for (Article article : articles) {
+            String result = results.get(article.url);
+            if (result != null) {
+                DatabaseManager.storeData(article, result);
+            }
+        }
+        
+        // 저장된 데이터 전체 출력
+        System.out.println("\n--- 데이터베이스 조회 결과 ---");
+        DatabaseManager.printAllData();
+
+        String SearchUrl = "https://n.news.naver.com/mnews/article/014/0005282470";
+        String DeleteUrl = "https://n.news.naver.com/mnews/article/014/0005282470";
+
+        // 특정 URL 데이터 검색
+        DatabaseManager.searchData(SearchUrl);
+
+        // 특정 URL 데이터 삭제
+        DatabaseManager.deleteData(DeleteUrl);
+
+        // 모든 데이터 삭제
+        DatabaseManager.deleteAllData();
+
     }
 }
