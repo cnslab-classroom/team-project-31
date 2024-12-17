@@ -3,17 +3,19 @@
  */
 package team.project;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
+import team.project.datacollection.*;
+import team.project.analysis.AIClient;
+import team.project.analysis.GPTClient;
 import team.project.analysis.OllamaClient;
 import team.project.datacollection.Crawler;
 import team.project.datastorage.DatabaseManager;
 import team.project.entity.Article;
+
+import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
+import java.io.IOException;
+import java.util.concurrent.*;
 
 
 public class App {
@@ -24,15 +26,16 @@ public class App {
 
         Crawler naverCrawler = new Crawler();
         naverCrawler.crawl();
+        System.out.println("크롤링 시작\n");
         List<Article> articles = naverCrawler.getArticles();
-        Map<String, String> results = new HashMap<>();
 
+        Map<String, String> results = new HashMap<>();
         // 각 기사에 대해 비동기 작업을 생성
         List<CompletableFuture<Void>> futures = articles.stream()
             .map(article -> CompletableFuture.supplyAsync(() -> {
-                OllamaClient client = new OllamaClient(executor);
+                AIClient client = new OllamaClient(executor);
                 try {
-                    return client.execute(article); // OllamaClient의 비동기 작업 실행
+                    return client.execute(article); // Client의 비동기 작업 실행
                 } catch (Exception e) {
                     System.err.println("Error processing article " + article.url + ": " + e.getMessage());
                     return null;
