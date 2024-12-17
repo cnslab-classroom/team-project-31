@@ -11,7 +11,8 @@ import team.project.datacollection.Crawler;
 import team.project.datastorage.DatabaseManager;
 import team.project.entity.Article;
 
-
+import java.util.Map;
+import java.util.HashMap;
 import java.util.List;
 import java.io.IOException;
 import java.util.concurrent.*;
