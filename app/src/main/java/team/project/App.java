@@ -7,6 +7,8 @@ import team.project.datacollection.*;
 import team.project.analysis.AIClient;
 import team.project.analysis.GPTClient;
 import team.project.analysis.OllamaClient;
+import team.project.datacollection.Crawler;
+import team.project.datastorage.DatabaseManager;
 import team.project.entity.Article;
 
 
@@ -25,8 +27,8 @@ public class App {
         naverCrawler.crawl();
         System.out.println("크롤링 시작\n");
         List<Article> articles = naverCrawler.getArticles();
-        System.out.println(articles.size()+ "개의 기사를 크롤링했습니다. \n");
-        
+
+        Map<String, String> results = new HashMap<>();
         // 각 기사에 대해 비동기 작업을 생성
         List<CompletableFuture<Void>> futures = articles.stream()
             .map(article -> CompletableFuture.supplyAsync(() -> {
@@ -39,6 +41,7 @@ public class App {
                 }
             }, executor).thenAccept(result -> {
                 if (result != null) {
+                    results.put(article.url, result);
                     System.out.println("\n\n종목: " + article.url + "\n- 결과: 성공" + "\n- 종목 유망성(-1 ~ 1): " + result);
                 } else {
                     System.out.println("\n\n종목: " + article.url + "\n- 결과: 실패");
@@ -54,6 +57,37 @@ public class App {
         } finally {
             executor.shutdown(); // Executor 종료
         }
-    
+
+        // 결과 출력
+        System.out.println("\n\n--- 결과 ---");
+        results.forEach((url, result) -> {
+            System.out.println("URL: " + url + " - 유망성: " + result);
+        });
+
+        // 분석 결과 저장
+        System.out.println("\n\n--- 데이터베이스 저장 시작 ---");
+        for (Article article : articles) {
+            String result = results.get(article.url);
+            if (result != null) {
+                DatabaseManager.storeData(article, result);
+            }
+        }
+        
+        // 저장된 데이터 전체 출력
+        System.out.println("\n--- 데이터베이스 조회 결과 ---");
+        DatabaseManager.printAllData();
+
+        String SearchUrl = "https://n.news.naver.com/mnews/article/014/0005282470";
+        String DeleteUrl = "https://n.news.naver.com/mnews/article/014/0005282470";
+
+        // 특정 URL 데이터 검색
+        DatabaseManager.searchData(SearchUrl);
+
+        // 특정 URL 데이터 삭제
+        DatabaseManager.deleteData(DeleteUrl);
+
+        // 모든 데이터 삭제
+        DatabaseManager.deleteAllData();
+
     }
 }
